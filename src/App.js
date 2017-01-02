@@ -22,6 +22,7 @@ class App extends Component {
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onTaskSubmit = this.onTaskSubmit.bind(this);
     this.deleteTask = this.deleteTask.bind(this);
+    this.taskFinished = this.taskFinished.bind(this);
   }
 
   onSearchChange(event) {
@@ -31,7 +32,7 @@ class App extends Component {
   onTaskSubmit(event) {
     event.preventDefault();
     let temporaryTaskArray = this.state.tasks;
-    temporaryTaskArray.push({task: this.state.taskToAdd, objectID: idCounter});
+    temporaryTaskArray.push({task: this.state.taskToAdd, objectID: idCounter, finished: "notFinished"});
     idCounter++;
     this.setState({tasks: temporaryTaskArray});
     this.refs.taskInput.value = '';
@@ -47,6 +48,14 @@ class App extends Component {
     this.setState({tasks : tempDeleteTaskArray});
   }
 
+  taskFinished(id, event) {
+    console.log("Got to taskFinished: ", id);
+    let index = getElementIndex(id, this.state.tasks);
+    let tempTaskArray = this.state.tasks;
+    tempTaskArray[index].finished = "finished";
+    this.setState({tasks: tempTaskArray});
+  }
+
   render() {
     return (
       <div className="App">
@@ -59,7 +68,7 @@ class App extends Component {
         </form>
         <ul>
         {this.state.tasks.map((task) =>
-          <li key={task.objectID}>{task.task} <button onClick={this.deleteTask.bind(this, task.objectID)}>Delete Task</button></li>
+          <li className={task.finished} key={task.objectID}>{task.task} <button onClick={this.taskFinished.bind(this, task.objectID)}>Finished</button><button onClick={this.deleteTask.bind(this, task.objectID)}>Delete Task</button></li>
         )}
         </ul>
       </div>
